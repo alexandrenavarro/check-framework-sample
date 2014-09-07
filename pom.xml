@@ -6,10 +6,16 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>
 		<dependency>
-			<groupId>edu.washington.cs.types.checker</groupId>
-			<artifactId>checker-framework</artifactId>
-			<version>1.6.1</version>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.0</version>
+			<scope>provider</scope>
 		</dependency>
+		<!--dependency>
+			<groupId>org.checkerframework</groupId>
+			<artifactId>checker-qual</artifactId>
+			<version>1.8.5</version>
+		</dependency-->
 	</dependencies>
 	<build>
 		<plugins>
@@ -18,40 +24,46 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 					<optimize>false</optimize>
 					<debug>true</debug>
 					<showDeprecation>true</showDeprecation>
 					<showWarnings>true</showWarnings>
+					<fork>true</fork>
 				</configuration>
 			</plugin>
+			<!-- Run annotation processors on src/main/java sources -->
 			<plugin>
-				<groupId>edu.washington.cs.types.checker</groupId>
-				<artifactId>checker-maven-plugin</artifactId>
-				<version>1.6.1</version>
+				<groupId>org.bsc.maven</groupId>
+				<artifactId>maven-processor-plugin</artifactId>
 				<executions>
 					<execution>
-						<phase>process-classes</phase>
+						<id>process</id>
 						<goals>
-							<goal>check</goal>
+							<goal>process</goal>
 						</goals>
+						<phase>generate-sources</phase>
+						<configuration>
+							<processors>
+								<processor>org.checkerframework.checker.nullness.NullnessChecker</processor>
+							</processors>
+							<compilerArguments>-Xlint:none -AsuppressWarnings=lambda.unimplemented -Xbootclasspath/p:/home/anavarro/Downloads/checker-framework-1.8.5/checker/dist/jdk8.jar</compilerArguments>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<processors>
-						<processor>checkers.nullness.NullnessChecker</processor>
-						<processor>checkers.igj.IGJChecker</processor>
-						<!--processor>checkers.javari.JavariChecker</processor -->
-					</processors>
-					<failOnError>true</failOnError>
-				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.checkerframework</groupId>
+						<artifactId>checker</artifactId>
+						<version>1.8.5</version>
+					</dependency>
+				</dependencies>
 			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -61,17 +73,15 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											edu.washington.cs.types.checker
-										</groupId>
+										<groupId>org.bsc.maven</groupId>
 										<artifactId>
-											checker-maven-plugin
+											maven-processor-plugin
 										</artifactId>
 										<versionRange>
-											[1.6.1,)
+											[3.1.0-beta1,)
 										</versionRange>
 										<goals>
-											<goal>check</goal>
+											<goal>process</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>

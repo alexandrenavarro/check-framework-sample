@@ -1,4 +1,4 @@
-import checkers.igj.quals.Immutable;
+
 
 /**
  * <p>ImmutableClass. </p>
@@ -6,7 +6,7 @@ import checkers.igj.quals.Immutable;
  * @author anavarro - Apr 23, 2013
  *
  */
-@Immutable
+//@Immutable
 public final class ImmutableClass {
     final private String name;
 
